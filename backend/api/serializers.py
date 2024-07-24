@@ -25,3 +25,7 @@ class JobDescriptionSerializer(serializers.ModelSerializer):
         model = JobDescription
         fields = ["id", "title", "content", "created_at", "author"]
         extra_kwargs = {"author": {"read_only": True}}
+
+class MessageSerializer(serializers.Serializer):
+    message = serializers.CharField()
+    

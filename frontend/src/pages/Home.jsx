@@ -3,6 +3,8 @@ import api from "../api";
 import Resume from "../components/Resume"
 import JobDescription from "../components/JobDescription"
 import "../styles/Home.css"
+import { useNavigate } from 'react-router-dom';
+
 
 function Home() {
     const [resumes, setResumes] = useState([]);
@@ -16,6 +18,12 @@ function Home() {
         getJobDescriptions();
         getResumes();
     }, []);
+
+    const navigate = useNavigate();
+
+    const handleChatNavigation = () => {
+      navigate('/chat');
+    };
 
     const getResumes = () => {
         api
@@ -146,9 +154,11 @@ function Home() {
                     value={jobDescriptionContent}
                     onChange={(e) => setJobDescriptionContent(e.target.value)}
                 ></textarea>
-                <br />
                 <input type="submit" value="Submit"></input>
             </form>
+            <br/>
+            <br />
+                <center><button onClick={handleChatNavigation} className="chat-button">Go to Chat Page</button></center>
         </div>
     );
 }

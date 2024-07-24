@@ -33,6 +33,7 @@ function Form({ route, method }) {
         }
     };
 
+
     return (
         <form onSubmit={handleSubmit} className="form-container">
             <h1>{name}</h1>
@@ -54,6 +55,8 @@ function Form({ route, method }) {
             <button className="form-button" type="submit">
                 {name}
             </button>
+            {method === "login" && <a href="/register">First time here? Click to register</a>}
+            {method != "login" &&  <a href="/login">Already have an account? Click to login</a>}
         </form>
     );
 }
