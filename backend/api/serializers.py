@@ -27,5 +27,8 @@ class JobDescriptionSerializer(serializers.ModelSerializer):
         extra_kwargs = {"author": {"read_only": True}}
 
 class MessageSerializer(serializers.Serializer):
-    message = serializers.CharField()
-    
+    conversation = serializers.ListField(
+        child=serializers.DictField(
+        child=serializers.CharField()
+    )
+)

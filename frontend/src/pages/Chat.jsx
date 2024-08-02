@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import api from '../api';
 import '../styles/Chat.css';
 
-
 function Chat() {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
@@ -11,17 +10,6 @@ function Chat() {
 
   const goHome = () => {
     navigate('/');
-  };
-
-  const send = (e) => {
-    e.preventDefault();
-    api
-        .post("/api/message/", { message: message })
-        .then((res) => {
-            if (res.status === 201) setResponseMessage(res.data.message);
-            else alert("Failed to send message.");
-        })
-        .catch((err) => alert(err));
   };
 
   const sendMessage = (e) => {
@@ -32,19 +20,25 @@ function Chat() {
     }
 
     const userMessage = { text: message, sender: 'user' };
-    setMessages([...messages, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setMessage(''); // Clear the input field
 
     api
-    .post("/api/message/", { message: message })
-    .then((res) => {
-        if (res.status === 201) setMessages([...messages, userMessage, { text: res.data.message, sender: 'bot' }]);
-        else {
+      .post("/api/message/", { conversation: updatedMessages })
+      .then((res) => {
+        if (res.status === 200) {
+          const botMessage = { text: res.data.message, sender: 'bot' };
+          setMessages([...updatedMessages, botMessage]);
+        } else {
           const errorMessage = { text: 'Error sending message. Please try again.', sender: 'bot' };
-          setMessages([...messages, userMessage, errorMessage]);
+          setMessages([...updatedMessages, errorMessage]);
         }
-    })
-    .catch((err) => alert(err));
+      })
+      .catch((err) => {
+        const errorMessage = { text: 'Error sending message. Please try again.', sender: 'bot' };
+        setMessages([...updatedMessages, errorMessage]);
+      });
   };
 
   return (

@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from .serializers import UserSerializer, ResumeSerializer, JobDescriptionSerializer, MessageSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Resume, JobDescription
+from .helper import AIHelper
 import json
 
 class CreateUserView(generics.CreateAPIView):
@@ -62,5 +63,20 @@ class MessageView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        return Response(data={"message": "Hello from your AI interviewer!"}, status=status.HTTP_201_CREATED)
+        if  serializer.is_valid():
+
+            # get conversation from json 
+            conversation = serializer.validated_data.get("conversation")
+
+            # get resume and job description
+            user = self.request.user
+            resume = Resume.objects.get(author=user).content
+            jobDescription = JobDescription.objects.get(author=user).content
+
+            # get ai response
+            ai = AIHelper(resume, jobDescription, conversation)
+            response = ai.getIntroResponse()
+
+            return Response(data={"message": f"{response}"}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
