@@ -20,27 +20,29 @@ class AIHelper:
                 chatHistory.append(HumanMessage(content))
             else:
                 chatHistory.append(AIMessage(content))
+
+        introSystemMessage = SystemMessage(content=f"""You are an interviewer giving a behavioural interview for a job that has this job description:
+                               {self.jobDescription}. The candidate that you are giving the interview to has this resume: {self.resume}. Introduce yourself as the interviewer and
+                               introduce the position that the candidate is applying. Then ask the candidate to tell you a bit about themself to kick the interview off. 
+                               Wait until they respond to ask anything else.""")
+        
+        bodyIntroSystemMessage = SystemMessage(content=f"""Now conduct the interview.
+                                Ask the candidate one question or follow up question at a time for them to respond before continuing
+                                the conversation. Do not make the questions too specific or too hard. After asking a question or two about a topic 
+                                go ahead and ask the candidate about a different topic.""")
+        
+        closingSystemMessage = SystemMessage(content = """It is time to end the interview now. Wrap up the interview and thank the candidate for their time.""")
+
+        chatHistory.insert(0, introSystemMessage)
+
+        if(len(chatHistory) > 3):
+            chatHistory.append(bodyIntroSystemMessage)
+        
+        if(len(chatHistory) > 14):
+            chatHistory.append(closingSystemMessage)
+
         return chatHistory
     
     def getResponse(self):
         return self.model.invoke(self.chatHistory).content
 
-    def getIntroResponse(self):
-        introSystemMessage = SystemMessage(content=f"""You are an interviewer giving a behavioural interview for a job that has this job description:
-                               {self.jobDescription}. The candidate that you are giving the interview to has this resume: {self.resume}. Start introducing yourself and the
-                               position they are applying for then ask the candidate to tell you a bit about themself. Wait until their response to say anything else.""")
-
-        self.chatHistory.insert(0, introSystemMessage)
-
-        return self.model.invoke(self.chatHistory).content
-
-    def getBodyResponse(self):
-        
-
-        return self.model.invoke(self.chatHistory).content
-
-    def getClosingResponse(self):
-        
-
-
-        return self.model.invoke(self.chatHistory).content

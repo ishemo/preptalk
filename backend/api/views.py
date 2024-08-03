@@ -75,7 +75,7 @@ class MessageView(generics.CreateAPIView):
 
             # get ai response
             ai = AIHelper(resume, jobDescription, conversation)
-            response = ai.getIntroResponse()
+            response = ai.getResponse()
 
             return Response(data={"message": f"{response}"}, status=status.HTTP_200_OK)
         else:
